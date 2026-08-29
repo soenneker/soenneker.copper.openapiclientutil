@@ -14,7 +14,7 @@ using Soenneker.Utils.AsyncSingleton;
 
 namespace Soenneker.Copper.OpenApiClientUtil;
 
-///<inheritdoc cref="ICopperOpenApiClientUtil"/>
+/// <inheritdoc cref="ICopperOpenApiClientUtil"/>
 public sealed class CopperOpenApiClientUtil : ICopperOpenApiClientUtil
 {
     private readonly AsyncSingleton<CopperOpenApiClient> _client;
