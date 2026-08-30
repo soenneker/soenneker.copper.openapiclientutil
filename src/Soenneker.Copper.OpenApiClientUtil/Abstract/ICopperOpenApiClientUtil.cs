@@ -3,15 +3,16 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 namespace Soenneker.Copper.OpenApiClientUtil.Abstract;
+
 /// <summary>
-/// Exposes a cached OpenAPI client instance.
+/// Provides a lazily created Copper OpenAPI client for the service lifetime.
 /// </summary>
-public interface ICopperOpenApiClientUtil: IDisposable, IAsyncDisposable
+public interface ICopperOpenApiClientUtil : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Returns the configured copper OpenAPI Client used by the Copper OpenAPI Client.
+    /// Returns the cached, configured Copper OpenAPI client.
     /// </summary>
     /// <param name="cancellationToken">Token used to cancel the operation.</param>
-    /// <returns>A task whose result is the requested copper OpenAPI Client.</returns>
+    /// <returns>A task whose result is the generated client.</returns>
     ValueTask<CopperOpenApiClient> Get(CancellationToken cancellationToken = default);
 }

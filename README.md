@@ -1,10 +1,11 @@
 [![](https://img.shields.io/nuget/v/soenneker.copper.openapiclientutil.svg?style=for-the-badge)](https://www.nuget.org/packages/soenneker.copper.openapiclientutil/)
 [![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.copper.openapiclientutil/publish-package.yml?style=for-the-badge)](https://github.com/soenneker/soenneker.copper.openapiclientutil/actions/workflows/publish-package.yml)
 [![](https://img.shields.io/nuget/dt/soenneker.copper.openapiclientutil.svg?style=for-the-badge)](https://www.nuget.org/packages/soenneker.copper.openapiclientutil/)
+[![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.copper.openapiclientutil/codeql.yml?label=CodeQL&style=for-the-badge)](https://github.com/soenneker/soenneker.copper.openapiclientutil/actions/workflows/codeql.yml)
 
 # Soenneker.Copper.OpenApiClientUtil
 
-Exposes a cached OpenAPI client instance.
+Creates and owns a configured, reusable Copper Kiota client for dependency-injection applications.
 
 ## Install
 
@@ -12,31 +13,51 @@ Exposes a cached OpenAPI client instance.
 dotnet add package Soenneker.Copper.OpenApiClientUtil
 ```
 
-## Quick start
+## Configuration
+
+```json
+{
+  "Copper": {
+    "ApiKey": "your-api-key",
+    "Email": "token-owner@example.com"
+  }
+}
+```
+
+The underlying HTTP package sends Copper's required `X-PW-AccessToken`, `X-PW-Application`, and `X-PW-UserEmail` headers. It also supports `Copper:ClientBaseUrl`, `Copper:Application`, `Copper:AuthHeaderName`, and `Copper:AuthHeaderValueTemplate`.
+
+## Registration
 
 ```csharp
 using Soenneker.Copper.OpenApiClientUtil.Registrars;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
-var result = services.AddCopperOpenApiClientUtilAsSingleton();
+services.AddCopperOpenApiClientUtilAsSingleton();
 ```
 
-Adds `CopperOpenApiClientUtil` as a singleton service.
+Use `AddCopperOpenApiClientUtilAsScoped()` when each dependency-injection scope should own its own generated client and request adapter.
 
-## What you get
+## Usage
 
-- `ICopperOpenApiClientUtil` — Exposes a cached OpenAPI client instance.
-- `CopperOpenApiClientUtilRegistrar` — Registers the OpenAPI client utility for dependency injection.
+```csharp
+using Soenneker.Copper.OpenApiClientUtil.Abstract;
 
-## API at a glance
+public sealed class CopperAccountReader(ICopperOpenApiClientUtil clientUtil)
+{
+    public async ValueTask<string?> Get(CancellationToken cancellationToken)
+    {
+        var client = await clientUtil.Get(cancellationToken);
+        return await client.Account.GetAsync(cancellationToken: cancellationToken);
+    }
+}
+```
 
-| API | What it does | Result / important behavior |
-| --- | --- | --- |
-| `CopperOpenApiClientUtilRegistrar.AddCopperOpenApiClientUtilAsSingleton(services)` | Adds `CopperOpenApiClientUtil` as a singleton service. | The same service collection, so additional registrations can be chained. |
-| `CopperOpenApiClientUtilRegistrar.AddCopperOpenApiClientUtilAsScoped(services)` | Adds `CopperOpenApiClientUtil` as a scoped service. | The same service collection, so additional registrations can be chained. |
+`Get` initializes the client once for the utility's lifetime. Concurrent callers share that initialization and receive the same client instance.
 
 ## Practical notes
 
-- Reuse the registered client instead of constructing one per operation.
-- Dispose instances you own when their scope ends so held resources can be released.
+- Configuration is captured when the underlying HTTP client is first created. Recreate the service lifetime to apply changed credentials or a changed base URL.
+- The utility owns the Kiota request adapter and releases it when dependency injection disposes the utility. Do not dispose the returned generated client or its transport separately.
+- Some generated endpoints return JSON as `string?` because the source Postman collection lacks a strong response schema.
+- Redact the API key, token-owner email, and Copper authentication headers from logs and traces.
