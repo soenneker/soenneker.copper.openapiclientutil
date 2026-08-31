@@ -5,7 +5,7 @@
 
 # Soenneker.Copper.OpenApiClientUtil
 
-Creates and owns a configured, reusable Copper Kiota client for dependency-injection applications.
+Provides a lazily created, reusable Copper Kiota client backed by the configured Copper HTTP provider.
 
 ## Install
 
@@ -36,7 +36,7 @@ var services = new ServiceCollection();
 services.AddCopperOpenApiClientUtilAsSingleton();
 ```
 
-Use `AddCopperOpenApiClientUtilAsScoped()` when each dependency-injection scope should own its own generated client and request adapter.
+Use `AddCopperOpenApiClientUtilAsScoped()` when each application scope should cache its own generated client while sharing the singleton HTTP provider.
 
 ## Usage
 
@@ -58,6 +58,6 @@ public sealed class CopperAccountReader(ICopperOpenApiClientUtil clientUtil)
 ## Practical notes
 
 - Configuration is captured when the underlying HTTP client is first created. Recreate the service lifetime to apply changed credentials or a changed base URL.
-- The utility owns the Kiota request adapter and releases it when dependency injection disposes the utility. Do not dispose the returned generated client or its transport separately.
+- Both registrations use a singleton HTTP provider. Disposing a scoped utility releases its generated-client reference without removing the shared `HttpClient`; the HTTP provider disposes that client when the application container shuts down.
 - Some generated endpoints return JSON as `string?` because the source Postman collection lacks a strong response schema.
 - Redact the API key, token-owner email, and Copper authentication headers from logs and traces.

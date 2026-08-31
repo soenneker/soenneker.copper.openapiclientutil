@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Description>A thread-safe utility for obtaining Copper's OpenApiClient singleton.</Description>
+        <Description>Provides a cached Copper OpenAPI client backed by the configured Copper HttpClient.</Description>
         <Version Condition="'$(BUILD_VERSION)' == ''">4.0.0</Version>
         <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
         <AssemblyName>Soenneker.Copper.OpenApiClientUtil</AssemblyName>
@@ -43,7 +43,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Kiota.GenericAuthenticationProvider" Version="4.0.38" />
         <PackageReference Include="Soenneker.Copper.HttpClients" Version="4.0.19" />
         <PackageReference Include="Soenneker.Copper.OpenApiClient" Version="4.0.5" />
         <PackageReference Include="Soenneker.Utils.AsyncSingleton" Version="4.0.820" />

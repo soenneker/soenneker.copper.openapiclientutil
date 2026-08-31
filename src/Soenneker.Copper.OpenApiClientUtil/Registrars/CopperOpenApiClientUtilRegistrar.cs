@@ -30,7 +30,7 @@ public static class CopperOpenApiClientUtilRegistrar
     /// <returns>The same service collection, so additional registrations can be chained.</returns>
     public static IServiceCollection AddCopperOpenApiClientUtilAsScoped(this IServiceCollection services)
     {
-        services.AddCopperOpenApiHttpClientAsScoped()
+        services.AddCopperOpenApiHttpClientAsSingleton()
                 .TryAddScoped<ICopperOpenApiClientUtil, CopperOpenApiClientUtil>();
 
         return services;
