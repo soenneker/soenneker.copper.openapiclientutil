@@ -43,8 +43,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Copper.HttpClients" Version="4.0.21" />
+        <PackageReference Include="Soenneker.Copper.HttpClients" Version="4.0.22" />
         <PackageReference Include="Soenneker.Copper.OpenApiClient" Version="4.0.5" />
-        <PackageReference Include="Soenneker.Utils.AsyncSingleton" Version="4.0.829" />
+        <PackageReference Include="Soenneker.Utils.AsyncSingleton" Version="4.0.830" />
     </ItemGroup>
 </Project>
