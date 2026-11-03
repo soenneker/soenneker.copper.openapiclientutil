@@ -47,6 +47,6 @@
 
     <ItemGroup>
         <PackageReference Include="Soenneker.Copper.HttpClients" Version="11.0.89" />
-        <PackageReference Include="Soenneker.Copper.OpenApiClient" Version="11.0.39" />
+        <PackageReference Include="Soenneker.Copper.OpenApiClient" Version="11.0.40" />
     </ItemGroup>
 </Project>
